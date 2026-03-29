@@ -7,18 +7,18 @@ import com.expediagroup.graphql.server.operations.Query
 import io.ktor.server.application.*
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.routing.*
-
-class HelloWorldQuery: Query {
-    fun hello(): String = "Hello World!"
-}
+import org.koin.ksp.generated.module
+import org.koin.ktor.ext.get
+import org.koin.ktor.plugin.Koin
 
 fun Application.graphQLModule() {
+    install(Koin) {
+        modules(AppModule().module)
+    }
     install(GraphQL) {
         schema {
             packages = listOf("com.example")
-            queries = listOf(
-                HelloWorldQuery()
-            )
+            queries = listOf(get<Query>())
         }
     }
     routing {

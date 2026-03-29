@@ -5,6 +5,9 @@ kotlin = "2.3.0"
 ktor = "3.4.1"
 logback = "1.4.14"
 graphql-kotlin = "9.1.0"
+koin-core = "4.2.0"
+koin-ksp = "2.3.1"
+ksp = "2.3.1"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -19,8 +22,13 @@ ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 graphql-kotlin-ktor-server = { group = "com.expediagroup", name = "graphql-kotlin-ktor-server", version.ref = "graphql-kotlin" }
+koin-annotation = { module = "io.insert-koin:koin-annotations", version.ref = "koin-ksp"}
+koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-ksp"}
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core"}
+koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin-core"}
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
