@@ -11,10 +11,10 @@ import org.jetbrains.exposed.sql.*
 
 fun Application.configureDatabases() {
     val database = Database.connect(
-        url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-        user = "root",
-        driver = "org.h2.Driver",
-        password = "",
+        url = "jdbc:postgresql://localhost:5432/mydatabase",
+        user = "postgres",
+        driver = "org.postgresql.Driver",
+        password = "password",
     )
     val userService = UserService(database)
     routing {
