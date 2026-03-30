@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.koin.core.annotation.Single
 
 @Serializable
-data class ExposedUser(val name: String, val age: Int)
+data class ExposedUser(val id: Int, val name: String, val age: Int)
 
 @Single
 class UserService(database: Database) {
@@ -30,8 +30,15 @@ class UserService(database: Database) {
         return dbQuery {
             Users.selectAll()
                 .where { Users.id eq id }
-                .map { ExposedUser(it[Users.name], it[Users.age]) }
+                .map { ExposedUser(id = it[Users.id], name = it[Users.name], age = it[Users.age]) }
                 .singleOrNull()
+        }
+    }
+
+    suspend fun readAll(): List<ExposedUser> {
+        return dbQuery {
+            Users.selectAll()
+                .map { ExposedUser(id = it[Users.id], name = it[Users.name], age = it[Users.age]) }
         }
     }
 
