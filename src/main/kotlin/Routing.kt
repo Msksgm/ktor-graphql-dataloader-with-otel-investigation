@@ -18,8 +18,9 @@ fun Application.graphQLModule() {
             AppModule().module,
             module {
                 single {
+                    val dbHost = System.getenv("DB_HOST") ?: "localhost"
                     Database.connect(
-                        url = "jdbc:postgresql://localhost:5432/mydatabase",
+                        url = "jdbc:postgresql://$dbHost:5432/mydatabase",
                         user = "postgres",
                         driver = "org.postgresql.Driver",
                         password = "password",

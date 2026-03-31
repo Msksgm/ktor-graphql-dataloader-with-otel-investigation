@@ -18,6 +18,9 @@ kotlin {
     jvmToolchain(21)
 }
 
+val javaagent: Configuration by configurations.creating {
+    description = "Dockerfileに埋め込むjavaagent"
+}
 dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
@@ -35,8 +38,30 @@ dependencies {
     implementation(libs.koin.ktor)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
+    javaagent(libs.opentelemetry.javaagent)
 }
+
+val destDir: Provider<Directory> = layout.buildDirectory.dir("container")
+val downloadJavaagent by tasks.registering(Copy::class) {
+    description = "Dockerfileに埋め込むjavaagentをダウンロードする"
+
+    doFirst {
+        mkdir(destDir)
+    }
+    from(javaagent.singleFile)
+    into(destDir)
+    // ダウンロードしたときに、"opentelemetry-javaagent-x.y.z.jar" が保存される
+    // バージョンアップ時の影響箇所を最小にするために、"opentelemetry-javaagent.jar"に rename する
+    rename {
+        "opentelemetry-javaagent.jar"
+    }
+}
+
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
+}
+
+tasks.named("buildFatJar") {
+    dependsOn(downloadJavaagent)
 }

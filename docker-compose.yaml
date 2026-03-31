@@ -1,4 +1,26 @@
 services:
+  app:
+    build: ./
+    environment:
+      DB_HOST: "db"
+      OTEL_SERVICE_NAME: "kotlin-example-app"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://collector:4318"
+      OTEL_LOGS_EXPORTER: "none"
+      OTEL_METRICS_EXPORTER: "none"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - collector
+      - db
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.141.0@sha256:b14234c4bc1b7364629af272e564913bb57bdc9736d45b8b6db5ab3417dc75f9
+    volumes:
+      - ./collector-config.yaml:/collector-config.yaml
+    command: ["--config=/collector-config.yaml"]
+    expose:
+      - "4318"
+    ports:
+      - "4318:4318"
   db:
     image: postgres:17@sha256:b994732fcf33f73776c65d3a5bf1f80c00120ba5007e8ab90307b1a743c1fc16
     command: ["postgres", "-c", "log_statement=all"]

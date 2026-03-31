@@ -8,6 +8,7 @@ graphql-kotlin = "9.1.0"
 koin-core = "4.2.0"
 koin-ksp = "2.3.1"
 ksp = "2.3.1"
+opentelemetry-javaagent = "2.26.1"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -26,6 +27,7 @@ koin-annotation = { module = "io.insert-koin:koin-annotations", version.ref = "k
 koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koin-ksp"}
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core"}
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin-core"}
+opentelemetry-javaagent = { module = "io.opentelemetry.javaagent:opentelemetry-javaagent", version.ref = "opentelemetry-javaagent" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
