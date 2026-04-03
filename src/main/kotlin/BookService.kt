@@ -34,6 +34,15 @@ class BookService(database: Database) {
         }
     }
 
+    suspend fun readBooksByUserIds(userIds: List<Int>): List<ExposedBook> {
+        return dbQuery {
+                Books.selectAll()
+                .where { Books.userId inList userIds }
+                .map { ExposedBook(it[Books.id], it[Books.name], it[Books.userId])
+            }
+        }
+    }
+
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 }

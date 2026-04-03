@@ -1,5 +1,7 @@
 package com.example
 
+import com.expediagroup.graphql.dataloader.KotlinDataLoader
+import com.expediagroup.graphql.dataloader.KotlinDataLoaderRegistryFactory
 import com.expediagroup.graphql.server.ktor.GraphQL
 import com.expediagroup.graphql.server.ktor.defaultGraphQLStatusPages
 import com.expediagroup.graphql.server.ktor.graphQLPostRoute
@@ -10,6 +12,7 @@ import org.jetbrains.exposed.sql.Database
 import org.koin.dsl.module
 import org.koin.ksp.generated.module
 import org.koin.ktor.ext.get
+import org.koin.ktor.ext.getKoin
 import org.koin.ktor.plugin.Koin
 
 fun Application.graphQLModule() {
@@ -33,6 +36,11 @@ fun Application.graphQLModule() {
         schema {
             packages = listOf("com.example")
             queries = listOf(get<HelloWorldQuery>(), get<UserQuery>())
+        }
+        engine {
+            dataLoaderRegistryFactory = KotlinDataLoaderRegistryFactory(
+                *getKoin().getAll<KotlinDataLoader<*, *>>().toTypedArray()
+            )
         }
     }
     routing {
