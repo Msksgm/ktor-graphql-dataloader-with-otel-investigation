@@ -1,4 +1,4 @@
-rootProject.name = "ktor-graphql-dataloader-sample"
+rootProject.name = "ktor-graphql-dataloader-with-otel-investigation"
 
 dependencyResolutionManagement {
     repositories {

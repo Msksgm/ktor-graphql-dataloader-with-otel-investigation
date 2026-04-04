@@ -1,4 +1,4 @@
-# ktor-graphql-dataloader-sample
+# ktor-graphql-dataloader-with-otel-investigation
 
 This project was created using the [Ktor Project Generator](https://start.ktor.io).
 
