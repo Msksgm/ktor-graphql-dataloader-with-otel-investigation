@@ -19,8 +19,6 @@ services:
     command: ["--config=/collector-config.yaml"]
     depends_on:
       - jaeger
-    expose:
-      - "4318"
     ports:
       - "4318:4318"
   jaeger:
