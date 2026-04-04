@@ -1,6 +1,6 @@
-FROM eclipse-temurin:25.0.1_8-jre@sha256:f6b092537e68d9836e86f676344e94102f2be325bbc652133cd9ef85b27d3ea9
+FROM eclipse-temurin:21.0.10_7-jre@sha256:9d4453b48613404e1fa6e5e7eabc687ea57edfb8a1ad413956c5168f84b66af9
 
-ADD build/libs/ktor-graphql-dataloader-with-otel-investigation-all.jar /app.jar
-ADD build/container/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
+COPY build/libs/ktor-graphql-dataloader-with-otel-investigation-all.jar /app.jar
+COPY build/container/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
 
 ENTRYPOINT java -javaagent:/opentelemetry-javaagent.jar -jar /app.jar
