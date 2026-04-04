@@ -79,10 +79,21 @@ data class UserResolver(
 
     @GraphQLDescription("user books via DataLoader")
     fun booksWithDataLoader(dataFetchingEnvironment: DataFetchingEnvironment): CompletableFuture<List<BookResolver>> {
-        val loader = dataFetchingEnvironment
-            .getDataLoader<Int, List<BookResolver>>(BookDataLoader::class.simpleName!!)
-            ?: throw MissingDataLoaderException(BookDataLoader::class.simpleName!!)
-        return loader.load(id)
+        val span = tracer.spanBuilder("booksWithDataLoader").startSpan()
+        span.setAttribute("userId", "$id")
+        val scope: Scope = span.makeCurrent()
+        return try {
+            val loader = dataFetchingEnvironment
+                    .getDataLoader<Int, List<BookResolver>>(BookDataLoader::class.simpleName!!)
+                    ?: throw MissingDataLoaderException(BookDataLoader::class.simpleName!!)
+            loader.load(id)
+            } catch (e: Exception) {
+                span.recordException(e)
+                throw e
+            } finally {
+                scope.close()
+                span.end()
+        }
     }
 }
 
