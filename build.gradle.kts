@@ -39,6 +39,7 @@ dependencies {
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
     javaagent(libs.opentelemetry.javaagent)
+    implementation(libs.opentelemetry.api)
 }
 
 val destDir: Provider<Directory> = layout.buildDirectory.dir("container")

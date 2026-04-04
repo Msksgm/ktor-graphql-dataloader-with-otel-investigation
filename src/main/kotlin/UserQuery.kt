@@ -7,11 +7,16 @@ import com.expediagroup.graphql.server.exception.MissingDataLoaderException
 import com.expediagroup.graphql.server.operations.Query
 import graphql.GraphQLContext
 import graphql.schema.DataFetchingEnvironment
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.context.Scope
 import kotlinx.coroutines.runBlocking
 import org.dataloader.DataLoader
 import org.dataloader.DataLoaderFactory
+import org.jetbrains.exposed.sql.Except
 import org.koin.core.annotation.Single
 import java.util.concurrent.CompletableFuture
+
+private val tracer = GlobalOpenTelemetry.getTracer("com.example.app")
 
 @Single([Query::class])
 class UserQuery(
@@ -56,8 +61,19 @@ data class UserResolver(
 ) {
     @GraphQLDescription("user books")
     suspend fun booksWithNPlusOne(): List<BookResolver> {
-        return bookService.readByUserId(id).map { book ->
-            BookResolver(id = book.id, title = book.name)
+        val span = tracer.spanBuilder("booksWithNPlusOne").startSpan()
+        val scope: Scope = span.makeCurrent()
+        try {
+            span.setAttribute("app.component", "book-service-with-n+1-problem")
+            return bookService.readByUserId(id).map { book ->
+                BookResolver(id = book.id, title = book.name)
+            }
+        } catch (e: Exception) {
+            span.recordException(e)
+            throw e
+        } finally {
+            scope.close()
+            span.end()
         }
     }
 
@@ -66,7 +82,6 @@ data class UserResolver(
         val loader = dataFetchingEnvironment
             .getDataLoader<Int, List<BookResolver>>(BookDataLoader::class.simpleName!!)
             ?: throw MissingDataLoaderException(BookDataLoader::class.simpleName!!)
-
         return loader.load(id)
     }
 }
@@ -90,11 +105,21 @@ class BookDataLoader(
     override fun getDataLoader(graphQLContext: GraphQLContext): DataLoader<Int, List<BookResolver>> {
         return DataLoaderFactory.newDataLoader { userIds ->
             CompletableFuture.supplyAsync {
-                runBlocking {
-                    val booksByUserId = bookService.readBooksByUserIds(userIds).groupBy { it.userId }
-                    userIds.map { userId ->
-                        booksByUserId[userId]?.map { BookResolver(id = it.id, title = it.name) } ?: emptyList()
+                val span = tracer.spanBuilder("CompletableFuture.supplyAsync").startSpan()
+                val scope: Scope = span.makeCurrent()
+                try {
+                    runBlocking {
+                        val booksByUserId = bookService.readBooksByUserIds(userIds).groupBy { it.userId }
+                        userIds.map { userId ->
+                            booksByUserId[userId]?.map { BookResolver(id = it.id, title = it.name) } ?: emptyList()
+                        }
                     }
+                } catch (e: Exception) {
+                    span.recordException(e)
+                    throw e
+                } finally {
+                    scope.close()
+                    span.end()
                 }
             }
         }
