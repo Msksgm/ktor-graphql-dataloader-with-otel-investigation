@@ -1,6 +1,8 @@
 services:
   app:
-    build: ./
+    build:
+      context: ./
+      target: build
     environment:
       DB_HOST: "db"
       OTEL_SERVICE_NAME: "kotlin-example-app"
@@ -9,6 +11,9 @@ services:
       OTEL_METRICS_EXPORTER: "none"
     ports:
       - "8080:8080"
+    volumes:
+      - .:/workspace
+    command: ["java", "-javaagent:/workspace/build/container/opentelemetry-javaagent.jar", "-jar", "/workspace/build/libs/ktor-graphql-dataloader-with-otel-investigation-all.jar"]
     depends_on:
       - collector
       - db

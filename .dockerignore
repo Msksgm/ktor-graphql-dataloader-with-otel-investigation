@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Gradle build output and caches
+build/
+.gradle
+.gradle-local/
+
+# IDE
+.idea
+*.iws
+*.iml
+*.ipr
+.vscode/
+out/
+
+# Kotlin compiler cache
+.kotlin/
+
+# Claude / AI config
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# Docker files
+Dockerfile
+compose.yaml
+.dockerignore
+
+# Auxiliary (used by other containers, not app build)
+collector-config.yaml
+initdb/
+README.md
